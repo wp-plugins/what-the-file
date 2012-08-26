@@ -9,9 +9,8 @@
 */
 
 class WhatTheFile
-{    
-  private static $objInstance = null;
-  private $strTemplateName    = "";
+{
+  private $template_name    = "";
   
   public function __construct()
   {
@@ -25,18 +24,18 @@ class WhatTheFile
   {
     add_action('wp_enqueue_scripts',  array(&$this, 'enqueue_style'));
     add_filter('template_include',    array(&$this, 'save_current_page'), 1000);
-    add_action( 'admin_bar_menu',     array( &$this, 'admin_bar_menu' ), 1000 );
+    add_action('admin_bar_menu',     array( &$this, 'admin_bar_menu' ), 1000);
   }
   
   private function get_current_page()
   {
-    return $this->strTemplateName;
+    return $this->template_name;
   }
   
-  public function save_current_page($strTemplateName)
+  public function save_current_page($template_name)
   {
-    $this->strTemplateName = basename($strTemplateName);
-    return $strTemplateName;
+    $this->template_name = basename($template_name);
+    return $template_name;
   }
 
   public function admin_bar_menu() {
