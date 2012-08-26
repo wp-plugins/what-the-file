@@ -1,0 +1,5 @@
+#wp-admin-bar-wtf-bar #wp-admin-bar-wtf-bar-sub .ab-item
+{
+  display: block !important;
+  text-align: right;
+}
