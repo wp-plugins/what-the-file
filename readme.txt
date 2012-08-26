@@ -4,7 +4,7 @@ Donate link:
 Tags: toolbar, development, file, template, template editing
 Requires at least: 3.1
 Tested up to: 3.4
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,14 +29,14 @@ In the toolbar you will find the "What The File" option. Hovering this option wi
 
 You have to be an Administrator to see the "What The File" option.
 
-
-
 == Screenshots ==
 
-1. This is the first screen   shot.
+1. What The File shows you what template file is used.
 
 == Changelog ==
 
-
+= 1.0.1 =
+* Changed the way the plugin initializes.
+* Moved CSS from file to inline CSS.
 
 == Upgrade notice ==
