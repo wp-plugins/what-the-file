@@ -3,7 +3,7 @@
   Plugin Name: What The File
   Plugin URI: http://www.cageworks.nl/what-the-file/
   Description: Find out what template file (PHP) is used on the current page. What The File will be visible in the Toolbar when viewing your website.
-  Version: 1.0.1
+  Version: 1.0.2
   Author: Barry Kooij
   Author URI: http://www.barrykooij.nl/
 */
@@ -40,7 +40,7 @@ class WhatTheFile
   public function admin_bar_menu() {
     global $wp_admin_bar;      
     $wp_admin_bar->add_menu( array( 'id' => 'wtf-bar', 'parent' => 'top-secondary', 'title' => __('What The File', 'what-the-file'), 'href' => FALSE ) );
-    $wp_admin_bar->add_menu( array( 'id' => 'wtf-bar-sub', 'parent' => 'wtf-bar', 'title' => $this->get_current_page(), 'href' => '/wp-admin/theme-editor.php?file='.$this->get_current_page().'&theme='.strtolower(wp_get_theme()) ) );
+    $wp_admin_bar->add_menu( array( 'id' => 'wtf-bar-sub', 'parent' => 'wtf-bar', 'title' => $this->get_current_page(), 'href' => '/wp-admin/theme-editor.php?file='.$this->get_current_page().'&theme='.get_template() ) );
   }
   
   public function print_css()
