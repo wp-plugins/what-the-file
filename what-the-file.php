@@ -3,7 +3,7 @@
   Plugin Name: What The File
   Plugin URI: http://www.cageworks.nl/what-the-file/
   Description: Find out what template file (PHP) is used on the current page. What The File will be visible in the Toolbar when viewing your website.
-  Version: 1.0.3
+  Version: 1.1.0
   Author: Barry Kooij
   Author URI: http://www.barrykooij.nl/
 */
@@ -33,7 +33,13 @@ class WhatTheFile
   
   public function save_current_page($template_name)
   {
-    $this->template_name = basename($template_name);
+		$this->template_name = basename($template_name);
+
+		// Do Roots Theme check
+		if(function_exists('roots_template_path')) {
+			$this->template_name = basename(roots_template_path());
+		}
+
     return $template_name;
   }
 
