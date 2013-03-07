@@ -2,8 +2,8 @@
 /*
   Plugin Name: What The File
   Plugin URI: http://www.barrykooij.com/what-the-file/
-  Description: Find out what template file (PHP) is used on the current page. What The File will be visible in the Toolbar when viewing your website.
-  Version: 1.1.1
+  Description: What The File adds an option to your toolbar showing you what file is used to display the page you’re on. If you want to you can click the file name to edit it directly through the theme editor, though I don’t recommend this for bigger changes. Since version 1.1.0 What The File also supports Roots Theme based themes.
+  Version: 1.1.2
   Author: Barry Kooij
   Author URI: http://www.barrykooij.com/
 */
@@ -46,7 +46,7 @@ class WhatTheFile
   public function admin_bar_menu() {
     global $wp_admin_bar;      
     $wp_admin_bar->add_menu( array( 'id' => 'wtf-bar', 'parent' => 'top-secondary', 'title' => __('What The File', 'what-the-file'), 'href' => FALSE ) );
-    $wp_admin_bar->add_menu( array( 'id' => 'wtf-bar-sub', 'parent' => 'wtf-bar', 'title' => $this->get_current_page(), 'href' => '/wp-admin/theme-editor.php?file='.$this->get_current_page().'&theme='.get_template() ) );
+    $wp_admin_bar->add_menu( array( 'id' => 'wtf-bar-sub', 'parent' => 'wtf-bar', 'title' => $this->get_current_page(), 'href' => get_admin_url().'theme-editor.php?file='.$this->get_current_page().'&theme='.get_template() ) );
   }
   
   public function print_css()
