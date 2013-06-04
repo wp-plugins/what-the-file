@@ -2,8 +2,8 @@
 /*
   Plugin Name: What The File
   Plugin URI: http://www.barrykooij.com/what-the-file/
-  Description: What The File adds an option to your toolbar showing you what file is used to display the page you’re on. If you want to you can click the file name to edit it directly through the theme editor. Supports BuddyPress and Roots Theme. More information can be found at the <a href='http://wordpress.org/extend/plugins/what-the-file/'>WordPress plugin page</a>.
-  Version: 1.2.1
+  Description: What The File adds an option to your toolbar showing what file and template parts are used to display the page you’re currently viewing. You can click the file name to directly edit it through the theme editor. Supports BuddyPress and Roots Theme. More information can be found at the <a href='http://wordpress.org/extend/plugins/what-the-file/'>WordPress plugin page</a>.
+  Version: 1.3.2
   Author: Barry Kooij
   Author URI: http://www.barrykooij.com/
 	License: GPL v3
@@ -30,6 +30,7 @@ class WhatTheFile
 	const OPTION_INSTALL_DATE 			= 'whatthefile-install-date';
 	const OPTION_ADMIN_NOTICE_KEY 	= 'whatthefile-hide-notice';
 	private $template_name  				= '';
+	private $template_parts					= array();
 
 	public static function plugin_activation()
 	{
@@ -109,6 +110,25 @@ class WhatTheFile
 		if( class_exists( 'BuddyPress' ) ) {
 			add_action( 'bp_core_pre_load_template', array( $this, 'save_buddy_press_template' ) );
 		}
+
+		// Template part hooks
+		add_action( 'all', array( $this, 'save_template_parts' ), 1, 3 );
+	}
+
+	private function file_exists_in_child_theme( $file )
+	{
+		return file_exists( STYLESHEETPATH . '/' . $file );
+	}
+
+	public function save_template_parts( $tag, $slug=null, $name=null )
+	{
+		if( 0 !== strpos( $tag, 'get_template_part_' ) ) {
+			return;
+		}
+
+		if( $slug != null && $name != null ){
+			$this->template_parts[] = $slug . '-' . $name . '.php';
+		}
 	}
 
 	public function catch_hide_notice()
@@ -167,15 +187,40 @@ class WhatTheFile
 		return $template_name;
 	}
 
-	public function admin_bar_menu() {
+	public function admin_bar_menu()
+	{
 		global $wp_admin_bar;
-		$wp_admin_bar->add_menu( array( 'id' => 'wtf-bar'			, 'parent' => 'top-secondary'	, 'title' => __( 'What The File', 'what-the-file' )	, 'href' => FALSE ) );
-		$wp_admin_bar->add_menu( array( 'id' => 'wtf-bar-sub'	, 'parent' => 'wtf-bar'				, 'title' => $this->get_current_page()							, 'href' => get_admin_url() . 'theme-editor.php?file=' . $this->get_current_page() . '&theme=' . get_template() ) );
+
+		$wp_admin_bar->add_menu( array( 'id' => 'wtf-bar', 'parent' => 'top-secondary', 'title' => __( 'What The File', 'what-the-file' )	, 'href' => false ) );
+
+		// Check if template file exists in child theme
+		$theme = get_stylesheet();
+		if( !$this->file_exists_in_child_theme( $this->get_current_page() ) ) {
+			$theme = get_template();
+		}
+
+		$wp_admin_bar->add_menu( array( 'id' => 'wtf-bar-template-file', 'parent' => 'wtf-bar', 'title' => $this->get_current_page(), 'href' => get_admin_url() . 'theme-editor.php?file=' . $this->get_current_page() . '&theme=' . $theme ) );
+
+		if( count( $this->template_parts ) > 0 ) {
+			$wp_admin_bar->add_menu( array( 'id' => 'wtf-bar-template-parts', 'parent' => 'wtf-bar', 'title' => 'Template Parts', 'href' => false ) );
+
+			foreach( $this->template_parts as $template_part ) {
+
+				// Check if template part exists in child theme
+				$theme = get_stylesheet();
+				if( !$this->file_exists_in_child_theme( $template_part ) ) {
+					$theme = get_template();
+				}
+
+				$wp_admin_bar->add_menu( array( 'id' => 'wtf-bar-template-part-' . $template_part, 'parent' => 'wtf-bar-template-parts', 'title' => $template_part, 'href' => get_admin_url() . 'theme-editor.php?file=' . $template_part . '&theme=' . $theme ) );
+			}
+
+		}
 	}
 
 	public function print_css()
 	{
-		echo "<style type=\"text/css\" media=\"screen\">#wp-admin-bar-wtf-bar #wp-admin-bar-wtf-bar-sub .ab-item{display: block !important;text-align: right;}</style>\n";
+		echo "<style type=\"text/css\" media=\"screen\">#wp-admin-bar-wtf-bar #wp-admin-bar-wtf-bar-template-file .ab-item, #wp-admin-bar-wtf-bar #wp-admin-bar-wtf-bar-template-parts {text-align:right;}</style>\n";
 	}
 
 }
